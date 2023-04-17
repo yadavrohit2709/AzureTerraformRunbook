@@ -1,0 +1,111 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  TF_VAR_BKSTRGRG: 'PmAKS'
+  TF_VAR_BKSTRG: 'tfstate012060038838'
+  TF_VAR_BKCONTAINER: 'tfstate'
+  TF_VAR_BKSTREGKEY: 'devpipeline.terraform.tfstate'
+
+stages:
+  - stage: Terraform_Initialiaze_and_validate
+    jobs:
+      - job: TFInitialiazeAndValidate
+        continueOnError: false
+        steps:
+          - task: TerraformInstaller@1
+            displayName: Terraform Install
+            inputs:
+              terraformVersion: 'latest'
+
+          - task: TerraformTaskV4@4
+            displayName: Terraform Init
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              backendServiceArm: 'AzureServiceConnection'
+              backendAzureRmResourceGroupName: '$(TF_VAR_BKSTRGRG)'
+              backendAzureRmStorageAccountName: '$(TF_VAR_BKSTRG)'
+              backendAzureRmContainerName: '$(TF_VAR_BKCONTAINER)'
+              backendAzureRmKey: '$(TF_VAR_BKSTREGKEY)'
+
+          - task: TerraformTaskV4@4
+            displayName: Terraform Validate
+            inputs:
+              provider: 'azurerm'
+              command: 'validate'
+
+  - stage: Terraform_Plan_And_Deploy
+    condition: succeeded('Terraform_Initialiaze_and_validate')
+    dependsOn: Terraform_Initialiaze_and_validate
+    jobs:
+      - job: TFPlanAndApply
+        steps:
+          - task: TerraformInstaller@1
+            displayName: Terraform Install
+            inputs:
+              terraformVersion: 'latest'
+
+          - task: TerraformTaskV4@4
+            displayName: Terraform Init
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              backendServiceArm: 'AzureServiceConnection'
+              backendAzureRmResourceGroupName: '$(TF_VAR_BKSTRGRG)'
+              backendAzureRmStorageAccountName: '$(TF_VAR_BKSTRG)'
+              backendAzureRmContainerName: '$(TF_VAR_BKCONTAINER)'
+              backendAzureRmKey: '$(TF_VAR_BKSTREGKEY)'
+          - task: TerraformTaskV4@4
+            displayName: Terraform Plan
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              commandOptions: "--var-file=dev.app.tfvars --input=false --out=tfplan"
+              environmentServiceNameAzureRM: 'AzureServiceConnection'
+          - task: TerraformTaskV4@4
+            displayName: Terraform Apply
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              commandOptions: '--var-file=dev.app.tfvars'
+              environmentServiceNameAzureRM: 'AzureServiceConnection'
+
+  - stage: Terraform_Destroy
+    jobs:
+      - job: TFDestroy
+        steps:
+          - task: TerraformInstaller@1
+            displayName: Terraform Install
+            inputs:
+              terraformVersion: 'latest'
+
+          - task: TerraformTaskV4@4
+            displayName: Terraform Init
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              backendServiceArm: 'AzureServiceConnection'
+              backendAzureRmResourceGroupName: '$(TF_VAR_BKSTRGRG)'
+              backendAzureRmStorageAccountName: '$(TF_VAR_BKSTRG)'
+              backendAzureRmContainerName: '$(TF_VAR_BKCONTAINER)'
+              backendAzureRmKey: '$(TF_VAR_BKSTREGKEY)'
+          - task: TerraformTaskV4@4
+            displayName: Terraform Plan
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              commandOptions: "--var-file=dev.app.tfvars --input=false --out=tfplan"
+              environmentServiceNameAzureRM: 'AzureServiceConnection'
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'destroy'
+              environmentServiceNameAzureRM: 'AzureServiceConnection'
