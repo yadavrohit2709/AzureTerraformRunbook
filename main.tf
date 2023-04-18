@@ -30,6 +30,7 @@ resource "azurerm_sql_server" "ecom_app_server" {
 resource "azurerm_sql_database" "ecomdb" {
   name                     = var.sql_database_name
   resource_group_name      = data.azurerm_resource_group.ecom_rg.name
+  location                 = data.azurerm_resource_group.ecom_rg.location 
   server_name              = azurerm_sql_server.ecom_app_server.name
   edition                  = var.sql_database_edition
   requested_service_objective_name = var.sql_database_service_objective_name
