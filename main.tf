@@ -21,7 +21,7 @@ resource "azurerm_sql_server" "ecom_app_server" {
   name                         = var.sql_server_name
   resource_group_name          = data.azurerm_resource_group.ecom_rg.name
   location                     = data.azurerm_resource_group.ecom_rg.location 
-  version             		     = var.sql_server_version
+  sql_server_version           = var.sql_server_version
   administrator_login          = var.sql_server_admin_login
   administrator_login_password = var.sql_server_admin_password
 }
@@ -44,18 +44,15 @@ resource "azurerm_automation_runbook" "ecomsqlbackuprunbook" {
   log_verbose         = true
   log_progress        = true
   runbook_type        = "PowerShell"
-  draft               = true
   content             = data.local_file.sql_backup.content
 }
 
 # Link the Azure Automation Runbook to the Azure SQL Database
 resource "azurerm_automation_schedule" "sqlbakcupschedule" {
   name                = var.automation_schedule_name
-  location            = azurerm_automation_account.ecomaa.location
   resource_group_name = azurerm_automation_account.ecomaa.resource_group_name
   automation_account_name = azurerm_automation_account.ecomaa.name
-  runbook_name        = azurerm_automation_runbook.ecomsqlbackuprunbook.name
-  schedule_type       = var.automation_schedule_type
+  frequency           = var.automation_schedule_frequency
   interval            = var.automation_schedule_interval
   start_time          = var.automation_schedule_start_time
 }
