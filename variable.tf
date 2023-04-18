@@ -75,7 +75,7 @@ variable "automation_schedule_type" {
 }
 
 variable "automation_schedule_interval" {
-  type = int
+  type = numeric
   default = 30
 }
 
