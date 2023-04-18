@@ -21,7 +21,7 @@ resource "azurerm_sql_server" "ecom_app_server" {
   name                         = var.sql_server_name
   resource_group_name          = data.azurerm_resource_group.ecom_rg.name
   location                     = data.azurerm_resource_group.ecom_rg.location 
-  sql_server_version           = var.sql_server_version
+  version                      = var.sql_server_version
   administrator_login          = var.sql_server_admin_login
   administrator_login_password = var.sql_server_admin_password
 }
