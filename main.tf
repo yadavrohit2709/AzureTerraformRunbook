@@ -16,11 +16,21 @@ resource "azurerm_automation_account" "ecomaa" {
   sku                 = var.automation_account_sku
 }
 
+# Create an Azure SQL Server
+resource "azurerm_sql_server" "ecom_app_server" {
+  name                         = var.sql_server_name
+  resource_group_name          = azurerm_resource_group.ecom_rg.name
+  location                     = data.azurerm_resource_group.ecom_rg.location 
+  version             		   = var.sql_server_version
+  administrator_login          = var.sql_server_admin_login
+  administrator_login_password = var.sql_server_admin_password
+}
+
 # Create an Azure SQL Database
 resource "azurerm_sql_database" "ecomdb" {
   name                     = var.sql_database_name
   resource_group_name      = data.azurerm_resource_group.ecom_rg.name
-  server_name              = var.sql_server_name
+  server_name              = azurerm_sql_server.ecom_app_server.name
   edition                  = var.sql_database_edition
   requested_service_objective_name = var.sql_database_service_objective_name
 }
