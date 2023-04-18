@@ -39,6 +39,10 @@ variable "sql_server_name" {
   type = string
 }
 
+variable "sql_server_version" {
+  type = string
+}
+
 variable "sql_server_admin_login" {
   type = string
 }
