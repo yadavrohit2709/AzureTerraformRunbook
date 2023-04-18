@@ -19,48 +19,67 @@ variable "BKSTREGKEY" {
 }
 
 variable "resource_group_name" {
-  type        = string
-  description = "Name of the resource group to create"
+  type = string
+}
+
+variable "resource_group_location" {
+  type = string
 }
 
 variable "automation_account_name" {
-  type        = string
-  description = "Name of the Azure Automation account to create"
+  type = string
 }
 
 variable "automation_account_sku" {
-  type        = string
-  description = "SKU of the Azure Automation account"
-  default     = "Basic"
-}
-
-variable "sql_database_name" {
-  type        = string
-  description = "Name of the Azure SQL database to create"
+  type = string
+  default = "Basic"
 }
 
 variable "sql_server_name" {
-  type        = string
-  description = "Name of the Azure SQL server"
+  type = string
+}
+
+variable "sql_server_admin_login" {
+  type = string
+}
+
+variable "sql_server_admin_password" {
+  type = string
+}
+
+variable "sql_database_name" {
+  type = string
 }
 
 variable "sql_database_edition" {
-  type        = string
-  description = "Edition of the Azure SQL database"
-  default     = "Basic"
+  type = string
+  default = "Standard"
 }
 
 variable "sql_database_service_objective_name" {
-  type        = string
-  description = "Service objective of the Azure SQL database"
-  default     = "Basic"
+  type = string
+  default = "S0"
 }
 
 variable "automation_runbook_name" {
-  type        = string
-  description = "Name of the Azure Automation runbook to create"
+  type = string
 }
 
 variable "automation_schedule_name" {
-  type        = string
-  description = "Name of the Azure Automation schedule to
+  type = string
+}
+
+variable "automation_schedule_type" {
+  type = string
+  default = "Recurring"
+}
+
+variable "automation_schedule_interval" {
+  type = int
+  default = 30
+}
+
+variable "automation_schedule_start_time" {
+  type = string
+  default = "12:00"
+}
