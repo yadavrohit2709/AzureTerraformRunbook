@@ -3,6 +3,7 @@ resource_group_location = "East US"
 automation_account_name = "ecom-automation-account"
 automation_account_sku = "Basic"
 automation_schedule_frequency = "Day"
+automation_runbook_name = "ecom-sqldbbackup-runbook"
 automation_schedule_name = "ecom-sqldbbackup-automation-schedule"
 automation_schedule_interval = 60
 automation_schedule_start_time = "2023-05-01T12:00:00Z"
